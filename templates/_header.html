@@ -1,0 +1,41 @@
+<html>
+  <head>
+
+    <!-- General Settings -->
+    <meta charset="utf-8">
+    <meta http-equiv="content-language" content="en-us">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="{global.baseUrl}" />
+
+    <!-- Meta Tags -->
+    <title>{head.title} | {global.appName}</title>
+    <meta name="description" content="{head.description}">
+
+    <!-- Static Assets -->
+    <link type="image/x-icon" rel="icon" href="favicon.ico">
+    <script type="text/javascript" charset="utf-8" src="public/app.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="public/app.css" />
+
+  </head>
+  <body class="{body.class}">
+    <!-- Page Wrapper -->
+    <div class="wrapper">
+      <!-- Header -->
+      <nav class="navbar navbar-expand navbar-light bg-dark mb-4">
+        <div class="navbar-nav ml-auto">
+          <a class="nav-item nav-link text-white" href="/">Home</a>
+          <a class="nav-item nav-link text-white loggedOut" href="/account/create">Signup</a>
+          <a class="nav-item nav-link text-white loggedOut" href="/session/create">Login</a>
+          <a class="nav-item nav-link text-white loggedIn" href="/menu">Menu</a>
+          <a class="nav-item nav-link text-white loggedIn" href="/cart">Cart</a>
+          <a class="nav-item nav-link text-white loggedIn" href="/account/edit">Account Settings</a>
+          <a class="nav-item nav-link text-white loggedIn" href="#" id="logoutButton">Logout</a>
+        </div>
+      </nav>
+
+      <!-- Page-Specific Content -->
+      <div class="content">
+        <div class="container">
+          <div class="row">
+            <div class="col-12 col-md-10 mx-auto">
