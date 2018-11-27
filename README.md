@@ -17,3 +17,10 @@ This is an open-ended assignment. You can take any direction you'd like to go wi
 ## Notes
 * Before using the api, please go to the /lib/config.js file and add stipe and mailgun tokens example of config: 'stripeToken': 'stripekeytoken', 'mailgunToken': 'mailguntoken', 'mailgunEmailDomain': 'sandbox123123123.mailgun.org'
 * In order to test the payment, please use the token: tok_mastercard
+
+## ToDos
+I know that there are a lot of things that could be improved, I will try to implement them in near future :)
+* Clear the cart after order successfully completed
+* Add an option to reduce amount of items, instead of only deleting them
+* Improve the design, so it's more pizza restaurant related
+* Implement payment with credit card instead of token
