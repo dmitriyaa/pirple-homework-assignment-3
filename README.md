@@ -10,3 +10,10 @@ It is time to build a simple frontend for the Pizza-Delivery API you created in 
 4. Place an order (with fake credit card credentials), and receive an email receipt
 
 This is an open-ended assignment. You can take any direction you'd like to go with it, as long as your project includes the requirements. It can include anything else you wish as well.
+
+## Comments
+* The application should be pretty straight forward to use.
+
+## Notes
+* Before using the api, please go to the /lib/config.js file and add stipe and mailgun tokens example of config: 'stripeToken': 'stripekeytoken', 'mailgunToken': 'mailguntoken', 'mailgunEmailDomain': 'sandbox123123123.mailgun.org'
+* In order to test the payment, please use the token: tok_mastercard

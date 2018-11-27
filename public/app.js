@@ -120,7 +120,6 @@ app.bindForms = function(){
   if(document.querySelector("form")){
 
     var allForms = document.querySelectorAll("form");
-    console.log(allForms);
     for(var i = 0; i < allForms.length; i++){
         allForms[i].addEventListener("submit", function(e){
 
@@ -137,7 +136,6 @@ app.bindForms = function(){
         if(document.querySelector("#"+formId+" .formSuccess")){
           document.querySelector("#"+formId+" .formSuccess").style.display = 'none';
         }
-
 
         // Turn the inputs into a payload
         var payload = {};
@@ -223,10 +221,20 @@ app.formResponseProcessor = function(formId,requestPayload,responsePayload){
     window.location = '/menu';
   }
 
+  // If payment was successful
+  if(formId == 'placeOrder'){
+    window.location = '/orderd';
+  }
+
   // If forms saved successfully and they have success messages, show them
   const formsWithSuccessMessages = ['accountEdit1', 'accountEdit2'];
   if (formsWithSuccessMessages.indexOf(formId) > -1 || formId.indexOf('form-cart') > -1) {
     document.querySelector('#' + formId + ' .formSuccess').style.display = 'block';
+  }
+
+  // If shopping cart was updated
+  if (formId.indexOf('form-add-to-cart') > -1) {
+    app.loadCart();
   }
 
   // If the user just deleted their account, redirect them to the account-deleted page
@@ -338,6 +346,15 @@ app.loadDataOnPage = () => {
   if (primaryClass == 'foodMenu') {
     app.loadMenu();
   }
+
+  // Logic for shopping cart
+  if (primaryClass == 'cart') {
+    app.loadCart();
+  }
+  // Logic for shopping cart
+  if (primaryClass == 'order') {
+    app.loadOrder();
+  }
 };
 
 // Load the account edit page specifically
@@ -389,13 +406,7 @@ app.loadMenu = () => {
                       <button type="submit" class="btn btn-primary">Add to cart</button>
                     </div>
                     <input type="hidden" name="menu_item" value="${item.name}">
-                    <select class="custom-select type-number" name="amount">
-                      <option value="1" selected>1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                    </select>
+                    <input type="number" name="amount" value="1" min="1"  class="custom-select type-number">
                   </div>
                   <div class="formError alert alert-danger" style="display: none"></div>
                   <div class="formError alert alert-success formSuccess" style="display: none">Added to shopping list.</div>
@@ -408,9 +419,88 @@ app.loadMenu = () => {
         container.innerHTML = menuString;
         app.bindForms(); // Rebinding the forms
     } else {
-      window.location('/session/create');
+      window.location = '/session/create';
     }
   })
+};
+
+// Load Shopping Cart
+app.loadCart = () => {
+  app.client.request(undefined, 'api/orders', 'GET', undefined, undefined, (statusCode, responsePayload) => {
+    if (statusCode == 200) {
+      console.log(responsePayload);
+      document.querySelector('.email').innerHTML = responsePayload.email;
+      document.querySelector('.streetAddress').innerHTML = responsePayload.streetAddress;
+      document.querySelector('.price').innerHTML = responsePayload.totalPrice + ' ' + responsePayload.currency.toUpperCase();
+
+      let cartString = ''
+      const products = responsePayload.products;
+      products.forEach(item => {
+        cartString += `
+        <div class="col-4 mb-3">
+          <div class="card"">
+            <div class="card-body">
+              <h5 class="text-capitalize">${item.menu_item}</h5>
+              <p>Amount: ${item.amount}</p>
+
+                <form action="/api/shopping-cart" method="POST" id="form-add-to-cart-${item.menu_item}">
+                  <input type="hidden" name="menu_item" value="${item.menu_item}">
+                  <input type="hidden" name="amount" value="1" class="type-number">
+                  <button type="submit" class="btn btn-primary">Add 1</button>
+                  <div class="formError alert alert-danger" style="display: none"></div>
+                </form>
+
+                <a href="#" data-name="${item.menu_item}" class="remove-from-cart btn btn-danger text-white">Remove</a>
+            </div>
+          </div>
+        </div>
+        `
+      });
+      document.querySelector('.cart-container').innerHTML = cartString;
+      app.bindForms(); // Rebinding the forms
+      app.bindRemoveFromCartButton();
+
+    } else {
+      window.location = '/session/create';
+    }
+  });
+};
+
+// Bind remove from cart button
+app.bindRemoveFromCartButton = () => {
+  const buttons = document.querySelectorAll('.remove-from-cart');
+  buttons.forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.preventDefault();
+      const menu_item = e.target.dataset.name;
+      const payload = {
+        menu_item
+      }
+      app.client.request(undefined, 'api/shopping-cart', 'DELETE', undefined, payload, (statusCode, responsePayload) => {
+        if (statusCode == 200) {
+          app.loadCart();
+        } else {
+          console.log('something went wrong');
+        }
+      });
+    });
+  })
+};
+
+// Load Order data
+app.loadOrder = () => {
+  const amount = document.querySelector('input[name="amount"]');
+  const currency = document.querySelector('input[name="currency"]');
+  app.client.request(undefined, 'api/orders', 'GET', undefined, undefined, (statusCode, responsePayload) => {
+    if (statusCode == 200) {
+      console.log(responsePayload);
+      amount.value = responsePayload.totalPrice;
+      currency.value = responsePayload.currency;
+    } else {
+      window.location = 'session/create';
+    }
+  });
+
 };
 
 // Init (bootstrapping)
@@ -430,6 +520,7 @@ app.init = function(){
 
   // Load data on page
   app.loadDataOnPage();
+
 };
 
 // Call the init processes after the window loads

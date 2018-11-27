@@ -1,0 +1,16 @@
+<h1 class="h3">Complete your order</h1>
+<div class="formWrapper">
+    <form action="/api/orders" method="POST" id="placeOrder">
+      <div class="formError alert alert-danger" style="display: none"></div>
+
+      <input type="hidden" name="amount">
+      <input type="hidden" name="currency">
+      <input type="hidden" name="description" value="Pizza Delivery Carge"></input>
+
+      <div class="form-group">
+        <label for="source">Source</label>
+        <input type="text" name="source" id="source" placeholder="" class="form-control">
+      </div>
+      <button type="submit" class="btn btn-primary">Order</button>
+    </form>
+</div>
